@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest extends BaseIntegrationTest {
+class UserServiceTest  {
 
     @MockBean(answer = Answers.RETURNS_DEEP_STUBS)
     private Keycloak keycloak;

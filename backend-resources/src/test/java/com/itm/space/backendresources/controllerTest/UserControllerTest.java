@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 class UserControllerTest extends BaseIntegrationTest {
 
-    @MockBean
+    @Autowired
     UserService userService;
     @Autowired
     private MockMvc mockMvc;
@@ -57,6 +57,7 @@ class UserControllerTest extends BaseIntegrationTest {
 
         verify(userService, times(1)).createUser(request);
     }
+
     @Test
     void createUser_whenNotAuthenticated() throws Exception {
         UserRequest request = new UserRequest(
@@ -70,8 +71,9 @@ class UserControllerTest extends BaseIntegrationTest {
         mockMvc.perform(requestWithContent(post("/api/users"), request))
                 .andExpect(status().isUnauthorized());
     }
+
     @Test
-    @WithMockUser(roles="MODERATOR")
+    @WithMockUser(roles = "MODERATOR")
     void createUser_withBadRequest() throws Exception {
         UserRequest request = new UserRequest(
                 "dramma",
