@@ -5,18 +5,21 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
-public class UpdateUser {
-    @NotBlank
+public class UserCreateDto {
+    @NotEmpty
     private String username;
+
+    @NotEmpty
+    private String email;
+
+    private Integer age;
 
     @NotBlank
     private String password;
 
-    @NotBlank
-    private String email;
-
-    @NotBlank
-    private Integer age;
+    private Set<String> roles;
 }

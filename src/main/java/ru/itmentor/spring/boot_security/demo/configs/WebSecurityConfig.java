@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.itmentor.spring.boot_security.demo.service.admin.AdminService;
@@ -29,16 +30,17 @@ public class WebSecurityConfig  {
     private String defaultPassword;
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/api/admin").hasRole(ADMIN_ROLE)
-                .requestMatchers("/api/user").hasAnyRole("USER", ADMIN_ROLE)
+                .requestMatchers("/api/admin/**").hasRole(ADMIN_ROLE)
+                .requestMatchers("/api/user/**").hasAnyRole(USER_ROLE, ADMIN_ROLE)
                 .anyRequest().authenticated()
     )
                 .httpBasic(Customizer.withDefaults());
@@ -50,7 +52,7 @@ public class WebSecurityConfig  {
         UserDetails defaultUser = User.builder()
                         .username(defaultUsername)
                 .password(passwordEncoder().encode(defaultPassword))
-                        .roles(ADMIN_ROLE,USER_ROLE)
+                        .roles(ADMIN_ROLE)
                         .build();
 
         InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager(defaultUser);

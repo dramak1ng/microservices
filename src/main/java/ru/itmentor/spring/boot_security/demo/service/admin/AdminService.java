@@ -1,9 +1,8 @@
 package ru.itmentor.spring.boot_security.demo.service.admin;
 
-import org.springframework.stereotype.Service;
-import ru.itmentor.spring.boot_security.demo.dto.request.CreateUser;
-import ru.itmentor.spring.boot_security.demo.dto.request.UpdateUser;
-import ru.itmentor.spring.boot_security.demo.dto.response.FindUserResponce;
+import ru.itmentor.spring.boot_security.demo.dto.request.UserCreateDto;
+import ru.itmentor.spring.boot_security.demo.dto.request.UserUpdateDto;
+import ru.itmentor.spring.boot_security.demo.dto.response.UserResponse;
 import ru.itmentor.spring.boot_security.demo.model.User;
 
 import java.util.List;
@@ -11,11 +10,11 @@ import java.util.List;
 
 public interface AdminService {
 
-    List<FindUserResponce> findAllUsers();
+    List<UserResponse> findAllUsers();
 
-    void saveUser(CreateUser userDto);
+    UserResponse saveUser(UserCreateDto userDto);
 
-    void updateUser(UpdateUser userDto,Long userId);
+    UserResponse updateUser(UserUpdateDto userDto, Long userId);
 
     void deleteUser(Long userId);
 

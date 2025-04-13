@@ -1,23 +1,53 @@
 package ru.itmentor.spring.boot_security.demo.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
-import ru.itmentor.spring.boot_security.demo.dto.request.CreateUser;
-import ru.itmentor.spring.boot_security.demo.dto.request.UpdateUser;
-import ru.itmentor.spring.boot_security.demo.dto.response.FindUserResponce;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import ru.itmentor.spring.boot_security.demo.dto.request.UserCreateDto;
+import ru.itmentor.spring.boot_security.demo.dto.request.UserUpdateDto;
+import ru.itmentor.spring.boot_security.demo.dto.response.UserResponse;
+import ru.itmentor.spring.boot_security.demo.model.Role;
 import ru.itmentor.spring.boot_security.demo.model.User;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface UserMapper {
+@Component
+@RequiredArgsConstructor
+public class UserMapper {
+    private final RoleMapper roleMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    List<FindUserResponce> toDtoListFromEntityList(List<User> entityList);
-    User toEntityFromDto(CreateUser dto);
-    void updateUserFromDto(UpdateUser dto, @MappingTarget User entity);
-    FindUserResponce toFindUserResponceDtoFromEntity(User user);
+    public User toEntity(UserCreateDto dto) {
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setAge(dto.getAge());
+        user.setEmail(dto.getEmail());
+        user.setRoles(roleMapper.mapRoleNamesToEntities(dto.getRoles()));
+        return user;
+    }
+
+    public User updateFromDto(UserUpdateDto dto, User user) {
+        if (dto.getUsername() != null) user.setUsername(dto.getUsername());
+        if (dto.getPassword() != null) user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        if (dto.getAge() != null) user.setAge(dto.getAge());
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+
+        if (dto.getRoles() != null) {
+            user.setRoles(roleMapper.mapRoleNamesToEntities(dto.getRoles()));
+        }
+        return user;
+    }
+
+    public UserResponse toDto(User user) {
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setAge(user.getAge());
+        response.setEmail(user.getEmail());
+        response.setRoles(user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet()));
+        return response;
+    }
 }

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serializable;
 import java.util.Set;
 
 @Data
@@ -18,7 +17,7 @@ public class Role implements GrantedAuthority{
     private int id;
 
     @Column(unique = true)
-    private String roleName;
+    private String name;
 
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
@@ -26,6 +25,6 @@ public class Role implements GrantedAuthority{
 
     @Override
     public String getAuthority() {
-        return roleName;
+        return name;
     }
 }
