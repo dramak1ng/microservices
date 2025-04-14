@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2f3640;
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #dcdde1;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2f3640;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 3px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select[multiple] {
+            height: 80px;
+        }
+
+        button {
+            background-color: #44bd32;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4cd137;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        th, td {
+            border: 1px solid #dcdde1;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #718093;
+            color: white;
+        }
+
+        td form {
+            margin-top: 10px;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>User List</h1>
+
+    <!-- Form for adding a new user -->
+    <form action="#" th:action="@{/admin}" th:object="${userDto}" method="post">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" th:field="*{username}" required />
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last name:</label>
+            <input type="text" id="lastName" th:field="*{lastName}" required />
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" th:field="*{password}" required />
+        </div>
+        <div class="form-group">
+            <label for="roles">Roles:</label>
+            <select id="roles" th:field="*{roles}" multiple>
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
+        </div>
+        <button type="submit">Add User</button>
+    </form>
+
+    <!-- Table to display users -->
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Last Name</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">ID</td>
+            <td th:text="${user.username}">Username</td>
+            <td th:text="${user.lastName}">Last Name</td>
+            <td>
+                <span th:each="role : ${user.roles}" th:text="${role.name} + ' '" style="margin-right: 4px;"></span>
+            </td>
+            <td class="actions">
+                <!-- Form for updating a user -->
+                <form th:action="@{/admin}" method="post">
+                    <input type="hidden" name="_method" value="put" />
+                    <input type="hidden" name="id" th:value="${user.id}" />
+
+                    <div class="form-group">
+                        <label>Username:</label>
+                        <input type="text" name="username" th:value="${user.username}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name:</label>
+                        <input type="text" name="lastName" th:value="${user.lastName}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" name="password" placeholder="New Password" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Roles:</label>
+                        <select name="roles" multiple>
+                            <option value="USER" th:selected="${user.roles.?[name == 'USER'].size() > 0}">USER</option>
+                            <option value="ADMIN" th:selected="${user.roles.?[name == 'ADMIN'].size() > 0}">ADMIN</option>
+                        </select>
+                    </div>
+                    <button type="submit">Update</button>
+                </form>
+
+                <!-- Form for deleting a user -->
+                <form th:action="@{/admin}" method="post">
+                    <input type="hidden" name="_method" value="delete" />
+                    <input type="hidden" name="id" th:value="${user.id}" />
+                    <button type="submit" style="background-color: #e84118;">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
